@@ -1,0 +1,45 @@
+---
+- name: Setup Punchtime
+  hosts: all
+  become: yes
+  tasks:
+    - name: Compile application
+      ansible.builtin.shell: env GOOS=linux GOARCH=arm GOARM=5 go build
+      delegate_to: localhost
+      become: no
+    - name: Install application
+      ansible.builtin.copy:
+        src: punchtime
+        dest: /usr/local/bin/punchtime
+        owner: pi
+        group: pi
+        mode: u=rwx,g=rx,o=rx
+    - name: Install service
+      ansible.builtin.copy:
+        src: punchtime.service
+        dest: /etc/systemd/system/punchtime.service
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Install timer
+      ansible.builtin.copy:
+        src: punchtime.timer
+        dest: /etc/systemd/system/punchtime.timer
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Enable timer for punchtime
+      ansible.builtin.systemd:
+        name: punchtime.timer
+        state: started
+        enabled: yes
+    - name: Copy database structure
+      ansible.builtin.copy:
+        src: migrations/000001_initial_schema.up.sql
+        dest: /tmp/structure.sql
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Setup sqlite database
+      ansible.builtin.shell:
+        cmd: sqlite3 /usr/local/share/punchtime/punchtime.db < /tmp/structure.sql
