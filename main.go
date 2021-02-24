@@ -29,7 +29,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	chicago, err := time.LoadLocation("America/Chicago")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	for _, user := range users {
-		user.MaybePunch(time.Now())
+		user.MaybePunch(time.Now().In(chicago))
 	}
 }
