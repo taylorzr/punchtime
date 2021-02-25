@@ -1,0 +1,33 @@
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+</html>
+
+<body>
+<div
+  x-data="{
+    users: [
+      { id: 1, name: 'Zach Taylor', duration: 666  },
+      { id: 2, name: 'Mike Son', duration: 69 }
+    ]
+  }"
+>
+<h3>Punchtime</h3>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Working Hours</th>
+  </tr>
+  <template x-for="user in users" :key="user">
+    <tr>
+    <td x-text="user.name"></td>
+    <td x-text="user.duration"></td>
+    </tr>
+  </template>
+
+</table>
+
+</div>
+</body>

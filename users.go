@@ -48,7 +48,6 @@ func (user User) Presence() (*slack.UserPresence, error) {
 }
 
 func (user User) CreatePunch(t time.Time) error {
-	// FIXME: Should probably use chicago timezone
 	_, err := db.Exec(`INSERT INTO punches (user_id, "in") VALUES ($1, $2)`, user.ID, t.Format(time.RFC3339))
 	return err
 }

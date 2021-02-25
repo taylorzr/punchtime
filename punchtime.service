@@ -2,4 +2,4 @@
 Description=Punchtime
 
 [Service]
-ExecStart=/usr/local/bin/punchtime
+ExecStart=/usr/local/bin/punchtime iterate

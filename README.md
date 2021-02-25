@@ -1,7 +1,8 @@
 # TODO
+- [ ] if someone is active now, count up until now as worked time
 - [ ] basic web ui to show time worked by day / week
 - [ ] haproxy? if frontend gets created
-- [ ] error handling
+- [ ] error service!
 ---
 - [x] systemd config including schedule > https://trstringer.com/systemd-timer-vs-cronjob/
 - [x] go code to hit api and update db

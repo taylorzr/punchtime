@@ -21,6 +21,12 @@
         owner: root
         group: root
         mode: u=rw,g=r,o=r
+    - name: Punchtime service
+      ansible.builtin.systemd:
+        name: punchtime.service
+        state: stopped
+        enabled: no
+        daemon_reload: yes
     - name: Install timer
       ansible.builtin.copy:
         src: punchtime.timer
@@ -33,13 +39,14 @@
         name: punchtime.timer
         state: started
         enabled: yes
+        daemon_reload: yes
     - name: Copy database structure
       ansible.builtin.copy:
         src: migrations/000001_initial_schema.up.sql
-        dest: /tmp/structure.sql
+        dest: /usr/local/share/punchtime/structure.sql
         owner: root
         group: root
         mode: u=rw,g=r,o=r
     - name: Setup sqlite database
       ansible.builtin.shell:
-        cmd: sqlite3 /usr/local/share/punchtime/punchtime.db < /tmp/structure.sql
+        cmd: sqlite3 /usr/local/share/punchtime/punchtime.db < /usr/local/share/punchtime/structure.sql
