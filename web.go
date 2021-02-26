@@ -14,14 +14,13 @@ func HoursHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	chicagoNow := time.Now().In(chicago).AddDate(0, 0, -3)
+	chicagoNow := time.Now().In(chicago)
 	chicagoBegin := time.Date(chicagoNow.Year(), chicagoNow.Month(), chicagoNow.Day(), 0, 0, 0, 0, chicagoNow.Location())
 	chicagoEnd := chicagoBegin.AddDate(0, 0, 1)
 	begin := chicagoBegin.UTC()
 	end := chicagoEnd.UTC()
 
-	fmt.Printf("%s -> %s\n", chicagoBegin.Format(time.RFC3339), chicagoEnd.Format(time.RFC3339))
-	fmt.Printf("%s -> %s\n", begin.Format(time.RFC3339), end.Format(time.RFC3339))
+	fmt.Printf("Getting hours between %s and %s\n", begin.Format(time.RFC3339), end.Format(time.RFC3339))
 
 	userHours, err := GetHours(begin, end)
 	if err != nil {
@@ -32,7 +31,8 @@ func HoursHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(
 		map[string]interface{}{
-			"time":  time.Now(),
+			"begin": chicagoBegin,
+			"end":   chicagoEnd,
 			"users": userHours,
 		})
 }

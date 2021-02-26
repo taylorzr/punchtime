@@ -14,32 +14,78 @@
         owner: pi
         group: pi
         mode: u=rwx,g=rx,o=rx
-    - name: Install service
+      register: application
+    - name: Install recorder service
       ansible.builtin.copy:
-        src: punchtime.service
-        dest: /etc/systemd/system/punchtime.service
+        src: punchtime_recorder.service
+        dest: /etc/systemd/system/punchtime_recorder.service
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Create recorder config dir
+      file:
+        path: /etc/systemd/system/punchtime_recorder.service.d/
+        state: directory
+    - name: Install recorder config
+      ansible.builtin.copy:
+        content: |
+          [Service]
+          Environment="SLACK_TOKEN={{ lookup('env', 'SLACK_TOKEN') }}"
+        dest: /etc/systemd/system/punchtime_recorder.service.d/override.conf
         owner: root
         group: root
         mode: u=rw,g=r,o=r
     - name: Punchtime service
       ansible.builtin.systemd:
-        name: punchtime.service
+        name: punchtime_recorder.service
         state: stopped
         enabled: no
         daemon_reload: yes
     - name: Install timer
       ansible.builtin.copy:
-        src: punchtime.timer
-        dest: /etc/systemd/system/punchtime.timer
+        src: punchtime_recorder.timer
+        dest: /etc/systemd/system/punchtime_recorder.timer
         owner: root
         group: root
         mode: u=rw,g=r,o=r
     - name: Enable timer for punchtime
       ansible.builtin.systemd:
-        name: punchtime.timer
+        name: punchtime_recorder.timer
         state: started
         enabled: yes
         daemon_reload: yes
+    - name: Install web service
+      ansible.builtin.copy:
+        src: punchtime_web.service
+        dest: /etc/systemd/system/punchtime_web.service
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Create web config dir
+      file:
+        path: /etc/systemd/system/punchtime_web.service.d/
+        state: directory
+    - name: Install web config
+      ansible.builtin.copy:
+        content: |
+          [Service]
+          Environment="SLACK_TOKEN={{ lookup('env', 'SLACK_TOKEN') }}"
+        dest: /etc/systemd/system/punchtime_web.service.d/override.conf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+    - name: Punchtime web service
+      ansible.builtin.systemd:
+        name: punchtime_web.service
+        state: started
+        enabled: yes
+        daemon_reload: yes
+    - name: Restart Punchtime web
+      ansible.builtin.systemd:
+        name: punchtime_web.service
+        state: restarted
+        enabled: yes
+      when: application.changed
     - name: Copy database structure
       ansible.builtin.copy:
         src: migrations/000001_initial_schema.up.sql

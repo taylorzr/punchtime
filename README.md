@@ -3,24 +3,25 @@
 - [ ] basic web ui to show time worked by day / week
 - [ ] haproxy? if frontend gets created
 - [ ] error service!
+- [ ] move port to env and put it in overrides
 ---
 - [x] systemd config including schedule > https://trstringer.com/systemd-timer-vs-cronjob/
 - [x] go code to hit api and update db
 - [x] ansible
+- [x] makefile
 
 
-# Setup Notes CLEAN THESE UP / ansible
-$ sudo vim /usr/local/testservice.sh
-echo heyoooooooooo
-$ sudo vim /etc/systemd/system/punchtime.service
-$ sudo systemctl start punchtime
-$ journalctl -u punchtime
-verify heyooo is there
-$ sudo vim /etc/systemd/system/punchtime.timer
-$ systemd-analyze calendar '*:0/1'
-$ sudo systemctl start punchtime.timer
-$ systemctl list-timers
-verify my timer is in there
-$ sudo systemctl enable punchtime.timer
+# Frontend ideas
+- [ ] dropdown for day selection
+- [ ] dropdown for user selection
+- [ ] some checkbox or filter for only working hours like 9-5 or 8-6
 
-env GOOS=linux GOARCH=arm GOARM=5 go build
+/punches
+/hours?day=2021-02-22
+/hours?start=2021-02-22&end=2021-02-23
+/punches?user='Zach Taylor'
+
+/hours
+/hours?day=2021-02-22
+/hours?start=2021-02-22&end=2021-02-23
+/hours?user='Zach Taylor'

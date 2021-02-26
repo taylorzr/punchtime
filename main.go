@@ -30,8 +30,8 @@ func main() {
 					}
 
 					http.HandleFunc("/hours", HoursHandler)
-					fmt.Println("Server started at port 8080")
-					return http.ListenAndServe("127.0.0.1:8080", nil)
+					fmt.Println("Server started at port 8081")
+					return http.ListenAndServe(":8081", nil)
 				},
 			},
 			{

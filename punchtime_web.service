@@ -1,0 +1,6 @@
+
+[Unit]
+Description=Punchtime
+
+[Service]
+ExecStart=/usr/local/bin/punchtime serve

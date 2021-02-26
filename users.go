@@ -21,6 +21,11 @@ type User struct {
 	Name    string `db:"name"`
 }
 
+// TODO:
+func (user User) Punches() ([]Punch, error) {
+	return nil, nil
+}
+
 func (user User) LastPunch() (*Punch, error) {
 	var punches []Punch
 
