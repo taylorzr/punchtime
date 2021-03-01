@@ -25,3 +25,9 @@
 /hours?day=2021-02-22
 /hours?start=2021-02-22&end=2021-02-23
 /hours?user='Zach Taylor'
+
+
+# Learned
+- [x] deploying via ansible
+- [x] creating systemd services & timers
+- [x] basic sqlite usage, and lovely details about timezones
