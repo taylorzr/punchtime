@@ -7,7 +7,7 @@ build: clean
 	env GOOS=linux GOARCH=arm GOARM=5 go build
 
 deploy: clean
-	ansible-playbook deploy.yml -i hosts.yml
+	ansible-playbook punchtime.yml -i hosts.yml
 
 serve:
 	reflex -d none -s -R vendor. -r \.go$ -- go run . serve
