@@ -10,7 +10,7 @@ import (
 func GetUsers() ([]User, error) {
 	var users []User
 
-	err := db.Select(&users, "select * from users")
+	err := config.DB.Select(&users, "select * from users")
 
 	return users, err
 }
@@ -29,7 +29,7 @@ func (user User) Punches() ([]Punch, error) {
 func (user User) LastPunch() (*Punch, error) {
 	var punches []Punch
 
-	err := db.Select(&punches, `
+	err := config.DB.Select(&punches, `
 		select p.* from punches p
 		join users u on u.id = p.user_id
 		where u.id = $1
@@ -48,12 +48,12 @@ func (user User) LastPunch() (*Punch, error) {
 func (user User) Presence() (*slack.UserPresence, error) {
 	// FIXME: If you use a bad id this doesn't return an error just fails silently?!?!
 	// E.g. my id is W0162LHTW2C but say you mess up copy/paste and use W0163LHTW2C instead
-	presence, err := slackClient.GetUserPresence(user.SlackID)
+	presence, err := config.Slack.GetUserPresence(user.SlackID)
 	return presence, err
 }
 
 func (user User) CreatePunch(t time.Time) error {
-	_, err := db.Exec(`INSERT INTO punches (user_id, "in") VALUES ($1, $2)`, user.ID, t.Format(time.RFC3339))
+	_, err := config.DB.Exec(`INSERT INTO punches (user_id, "in") VALUES ($1, $2)`, user.ID, t.Format(time.RFC3339))
 	return err
 }
 

@@ -14,22 +14,40 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var db *sqlx.DB
-var slackClient *slack.Client
+var config Punchtime
+
+type Punchtime struct {
+	Timezone *time.Location
+	DB       *sqlx.DB
+	Slack    *slack.Client
+}
 
 func main() {
+	db, err := sqlx.Connect("sqlite", "/usr/local/share/punchtime/punchtime.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	chicago, err := time.LoadLocation("America/Chicago")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slackClient := slack.New(os.Getenv("SLACK_TOKEN"))
+
+	config = Punchtime{
+		Timezone: chicago,
+		DB:       db,
+		Slack:    slackClient,
+	}
+
 	app := &cli.App{
 		Commands: []*cli.Command{
 			{
 				Name: "serve",
 				Action: func(c *cli.Context) error {
-					var err error
-					db, err = sqlx.Connect("sqlite", "/usr/local/share/punchtime/punchtime.db")
-					if err != nil {
-						return err
-					}
-
 					http.HandleFunc("/hours", HoursHandler)
+					http.HandleFunc("/firstlasts", FirstLastsHandler)
 					fmt.Println("Server started at port 8081")
 					return http.ListenAndServe(":8081", nil)
 				},
@@ -42,8 +60,6 @@ func main() {
 					if err != nil {
 						return err
 					}
-
-					slackClient = slack.New(os.Getenv("SLACK_TOKEN"))
 
 					users, err := GetUsers()
 					if err != nil {
@@ -76,7 +92,7 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
+	err = app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,8 +3,9 @@
   hosts: all
   become: yes
   tasks:
-   - name: Compile application
-      ansible.builtin.shell: env GOOS=linux GOARCH=arm GOARM=5 go build
+    - name: Compile application
+      ansible.builtin.shell:
+        env GOOS=linux GOARCH=arm GOARM=5 go build
       delegate_to: localhost
       become: no
     - name: Install application

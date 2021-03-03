@@ -14,7 +14,7 @@ type Punch struct {
 }
 
 func (punch Punch) PunchOut(t time.Time) error {
-	_, err := db.Exec(`
+	_, err := config.DB.Exec(`
 update punches
 set "out" = $1
 where id = $2

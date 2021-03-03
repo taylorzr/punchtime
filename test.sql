@@ -1,41 +1,45 @@
-select u.name, sum(julianday("out") - julianday("in")) * 24 * 60 as minutes
-from punches p
-join users u on p.user_id = u.id
-where "in" > datetime(current_timestamp, 'start of day')
-and "out" < datetime(current_timestamp, '+1 day', 'start of day')
-group by u.name
-;
-
-select "in", "out", (julianday("out") - julianday("in")) * 24 * 60 as minutes
-from punches p
+-- first / last punch of the day
+select u.name, min("in"), max("out") from punches p
 join users u on u.id = p.user_id
-where name = 'Zach Bosteel'
+where "in" between '2021-03-03T00:00:00Z' and '2021-03-04T06:00:00Z'
+group by u.name
+order by min("in") asc
 ;
 
 
+-- hours worked today including now
 select
-  u.name
-  , strftime('%Y-%m-%dT00:00:00', "in")
-  , sum(julianday("out") - julianday("in")) * 24 as hours
+	u.name
+	, coalesce(sum(julianday(coalesce("out", datetime('now'))) - julianday("in")) * 24 , 0) as hours
 from punches p
 join users u on p.user_id = u.id
--- where u.name = 'Zach Taylor'
-where strftime('%Y-%m-%dT00:00:00', "in") = strftime('%Y-%m-%dT00:00:00', 'now', '-6 hours', 'start of day')
-group by u.name, datetime(strftime('%Y-%m-%dT00:00:00', "in"))
--- order by datetime(strftime('%Y-%m-%dT00:00:00', "in")) asc
+where "in" between '2021-03-02T06:00:00Z' and '2021-03-03T06:00:00Z'
+group by u.name
 order by hours desc
 ;
 
+
+-- hours worked today not including now
 select
-  u.name
-  , strftime('%Y-%m-%dT00:00:00', "in")
-  , "in"
-  , "out"
+	u.name
+	, coalesce(sum(julianday("out") - julianday("in")) * 24 , 0) as hours
 from punches p
 join users u on p.user_id = u.id
--- where u.name = 'Zach Taylor'
-where strftime('%Y-%m-%dT00:00:00', "in") = strftime('%Y-%m-%dT00:00:00', 'now', '-6 hours', 'start of day')
-order by u.name
+where "in" between '2021-03-01T06:00:00Z' and '2021-03-02T06:00:00Z'
+group by u.name
+order by hours desc
+;
+
+
+-- punches for a specific user
+select
+  u.name
+  , coalesce("out", datetime('now'))
+  , "in"
+from punches p
+join users u on p.user_id = u.id
+where "in" between '2021-03-01T06:00:00Z' and '2021-03-02T06:00:00Z'
+and u.name = 'Zach Taylor'
 ;
 
 -- Previous data structure, lol the query complexity is ridiculous because the data model was wrong

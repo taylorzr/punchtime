@@ -13,7 +13,7 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 	var hours []Hours
 
 	// TODO: Optionally coalesce last out to now? How to do this for not today queries?
-	err := db.Select(&hours, `
+	err := config.DB.Select(&hours, `
 		select
 			u.name
 			, coalesce(
@@ -25,10 +25,10 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 		where "in" between $1 and $2
 		group by u.name
 		order by hours desc
-`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
+	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
 
 	// NOTE: Query without coalesce the out
-	// err := db.Select(&hours, `
+	// err := config.DB.Select(&hours, `
 	// 	select
 	// 		u.name
 	// 		, coalesce(
@@ -43,4 +43,31 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 	// `, begin.Format(time.RFC3339), end.Format(time.RFC3339))
 
 	return hours, err
+}
+
+type FirstLast struct {
+	Name  string `db:"name" json:"name"`
+	First string `db:"first" json:"first"`
+	Last  string `db:"last" json:"last"`
+}
+
+func GetFirstLasts(begin time.Time, end time.Time) ([]FirstLast, error) {
+	var firstLasts []FirstLast
+
+	err := config.DB.Select(&firstLasts, `
+		select u.name, min("in") as first, coalesce(max("out"), '-')  as last from punches p
+		join users u on u.id = p.user_id
+		where "in" between $1 and $2
+		group by u.name
+		order by min("in") asc
+		;
+	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
+
+	// FIXME: Scanner for queries that returns times
+	// for _, fl := range firstLasts {
+	// 	fl.First = fl.First.In(config.Timezone)
+	// 	fl.Last = fl.Last.In(config.Timezone)
+	// }
+
+	return firstLasts, err
 }

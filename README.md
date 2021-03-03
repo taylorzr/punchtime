@@ -1,7 +1,6 @@
 # TODO
 - [ ] if someone is active now, count up until now as worked time
 - [ ] basic web ui to show time worked by day / week
-- [ ] haproxy? if frontend gets created
 - [ ] error service!
 - [ ] move port to env and put it in overrides
 ---
@@ -15,6 +14,10 @@
 - [ ] dropdown for day selection
 - [ ] dropdown for user selection
 - [ ] some checkbox or filter for only working hours like 9-5 or 8-6
+- [ ] per day metrics (or abstract to per time period?)
+	- [ ] first/last punch for the day per user
+	- [ ] availability during core hours 9-5 for each user
+	- [ ] hours over entire day for each user
 
 /punches
 /hours?day=2021-02-22
