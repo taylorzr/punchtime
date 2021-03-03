@@ -9,11 +9,12 @@ build: clean
 deploy: clean
 	ansible-playbook punchtime.yml -i hosts.yml
 
+# FIXME: Doesn't seem to auto-reload inside this makefile :(
 serve:
 	reflex -d none -s -R vendor. -r \.go$ -- go run . serve
 
 sql:
-	ssh pi@192.168.1.2 -t 'sudo sqlite3 /usr/local/share/punchtime/punchtime.db'
+	ssh pi@192.168.1.2 -t 'sudo sqlite3 -header -column /usr/local/share/punchtime/punchtime.db'
 
 ssh:
 	ssh pi@192.168.1.2

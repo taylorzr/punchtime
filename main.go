@@ -49,7 +49,11 @@ func main() {
 					http.HandleFunc("/hours", HoursHandler)
 					http.HandleFunc("/firstlasts", FirstLastsHandler)
 					fmt.Println("Server started at port 8081")
-					return http.ListenAndServe(":8081", nil)
+					location := os.Getenv("LOCATION")
+					if location == "" {
+						location = ":8081"
+					}
+					return http.ListenAndServe(location, nil)
 				},
 			},
 			{

@@ -5,8 +5,9 @@ import (
 )
 
 type Hours struct {
-	Name  string `db:"name" json:"name"`
-	Hours string `db:"hours" json:"hours"`
+	Name       string `db:"name" json:"name"`
+	Hours      string `db:"hours" json:"hours"`
+	PunchCount int    `db:"punch_count" json:"punch_count"`
 }
 
 func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
@@ -20,6 +21,7 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 			  sum(julianday(coalesce("out", datetime('now'))) -
 				julianday("in")) * 24
 				, 0) as hours
+			, count(p.id) as punch_count
 		from punches p
 		join users u on p.user_id = u.id
 		where "in" between $1 and $2

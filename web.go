@@ -12,18 +12,27 @@ func now() time.Time {
 	return time.Now().In(config.Timezone)
 }
 
-func begin(t time.Time) time.Time {
+func beginDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location()).UTC()
 }
 
-func end(t time.Time) time.Time {
-	return begin(t).AddDate(0, 0, 1)
+func endDay(t time.Time) time.Time {
+	return beginDay(t).AddDate(0, 0, 1)
 }
 
 func HoursHandler(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+
+	var begin, end time.Time
 	now := now()
-	begin := begin(now)
-	end := end(now)
+
+	if len(q["core"]) > 0 && q["core"][0] == "true" {
+		begin = time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location()).UTC()
+		end = time.Date(now.Year(), now.Month(), now.Day(), 17, 0, 0, 0, now.Location()).UTC()
+	} else {
+		begin = beginDay(now)
+		end = endDay(now)
+	}
 
 	fmt.Printf("Getting hours between %s and %s\n", begin.Format(time.RFC3339), end.Format(time.RFC3339))
 
@@ -45,8 +54,8 @@ func HoursHandler(w http.ResponseWriter, r *http.Request) {
 
 func FirstLastsHandler(w http.ResponseWriter, r *http.Request) {
 	now := now()
-	begin := begin(now)
-	end := end(now)
+	begin := beginDay(now)
+	end := endDay(now)
 
 	firstLasts, err := GetFirstLasts(begin, end)
 	// FIXME: Write http 500?
