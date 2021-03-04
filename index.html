@@ -5,29 +5,68 @@
 </html>
 
 <body>
-<div
-  x-data="{
-    users: [
-      { id: 1, name: 'Zach Taylor', duration: 666  },
-      { id: 2, name: 'Mike Son', duration: 69 }
-    ]
-  }"
->
-<h3>Punchtime</h3>
+<div x-data="data()" x-init="getHours(true)">
+<h3>Core Hours</h3>
 
 <table>
   <tr>
     <th>Name</th>
     <th>Working Hours</th>
   </tr>
-  <template x-for="user in users" :key="user">
+  <template x-for="user in hours" :key="user">
     <tr>
     <td x-text="user.name"></td>
-    <td x-text="user.duration"></td>
+    <td x-text="user.hours"></td>
     </tr>
   </template>
 
 </table>
 
 </div>
+
+<div x-data="data()" x-init="getHours(false)">
+<h3>All Hours</h3>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Working Hours</th>
+  </tr>
+  <template x-for="user in hours" :key="user">
+    <tr>
+    <td x-text="user.name"></td>
+    <td x-text="user.hours"></td>
+    </tr>
+  </template>
+
+</table>
+
+</div>
+
+<script type="text/javascript">
+function data() {
+	return {
+		hours: [
+			{ id: 1, name: 'Zach Taylor', hours: 666  },
+			{ id: 2, name: 'Mike Son', hours: 69 }
+		],
+		isLoading: false,
+		getHours(core) {
+			url = 'http://192.168.1.2:8081/hours'
+			if (core) {
+				url = url + '?core=true'
+			}
+			this.isLoading = true;
+			fetch(url)
+				.then((res) => res.json())
+				.then((data) => {
+					this.isLoading = false;
+					console.log(data);
+					this.hours = data.users;
+				});
+		},
+	};
+}
+</script>
+
 </body>

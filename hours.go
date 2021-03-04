@@ -13,14 +13,15 @@ type Hours struct {
 func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 	var hours []Hours
 
-	// TODO: Optionally coalesce last out to now? How to do this for not today queries?
 	err := config.DB.Select(&hours, `
 		select
 			u.name
-			, coalesce(
-			  sum(julianday(coalesce("out", datetime('now'))) -
-				julianday("in")) * 24
-				, 0) as hours
+			, round(coalesce(
+			  sum(
+					julianday(
+						min(coalesce("out", datetime('now')), $2)
+					) - julianday("in")) * 24
+				, 0), 2) as hours
 			, count(p.id) as punch_count
 		from punches p
 		join users u on p.user_id = u.id
