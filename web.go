@@ -21,6 +21,8 @@ func endDay(t time.Time) time.Time {
 }
 
 func HoursHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	q := r.URL.Query()
 
 	var begin, end time.Time
@@ -53,6 +55,8 @@ func HoursHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func FirstLastsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	now := now()
 	begin := beginDay(now)
 	end := endDay(now)

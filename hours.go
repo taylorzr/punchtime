@@ -5,9 +5,9 @@ import (
 )
 
 type Hours struct {
-	Name       string `db:"name" json:"name"`
-	Hours      string `db:"hours" json:"hours"`
-	PunchCount int    `db:"punch_count" json:"punch_count"`
+	Name       string  `db:"name" json:"name"`
+	Hours      float32 `db:"hours" json:"hours"`
+	PunchCount int     `db:"punch_count" json:"punch_count"`
 }
 
 func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
@@ -16,16 +16,19 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 	err := config.DB.Select(&hours, `
 		select
 			u.name
-			, round(coalesce(
-			  sum(
-					julianday(
-						min(coalesce("out", datetime('now')), $2)
-					) - julianday("in")) * 24
-				, 0), 2) as hours
+			, round(
+					coalesce(
+						sum(
+							julianday(min(coalesce("out", datetime('now')), $2))
+							- julianday(max("in", $1))
+						) * 24
+					, 0),
+				2) as hours
 			, count(p.id) as punch_count
 		from punches p
 		join users u on p.user_id = u.id
 		where "in" between $1 and $2
+		or "out" between $1 and $2
 		group by u.name
 		order by hours desc
 	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))

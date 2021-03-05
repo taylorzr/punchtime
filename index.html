@@ -1,72 +1,128 @@
+<!doctype html>
 <html>
-<head>
-  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  </head>
 </html>
 
-<body>
-<div x-data="data()" x-init="getHours(true)">
-<h3>Core Hours</h3>
+<body class="font-mono p-3">
+  <div x-data="{ open: false }">
+      <button @click="open = true">Open Dropdown</button>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Working Hours</th>
-  </tr>
-  <template x-for="user in hours" :key="user">
-    <tr>
-    <td x-text="user.name"></td>
-    <td x-text="user.hours"></td>
-    </tr>
-  </template>
+      <ul
+          x-show="open"
+          @click.away="open = false"
+      >
+          Dropdown Body
+      </ul>
+  </div>
 
-</table>
+  <div class="flex space-x-4">
+    <div x-data="data()" x-init="getHours(true)">
+      <h3 class="px-1 py-3">Hours</h3>
 
-</div>
+      <p>
+        Sorted by: <span x-text="sortColumn"></span>
+        Direction: <span x-text="sortDesc ? 'desc' : 'asc'"></span>
+      </p>
 
-<div x-data="data()" x-init="getHours(false)">
-<h3>All Hours</h3>
+      <table class="table-auto">
+        <thead>
+          <tr>
+            <th class="border px-6 py-1 w-1/3" @click="sortBy('name')">Name</th>
+            <th class="border px-6 py-1" @click="sortBy('hours')">Working Hours</th>
+            <th class="border px-6 py-1" @click="sortBy('hours')">Core Hours</th>
+            <th class="border px-6 py-1">First Punch</th>
+            <th class="border px-6 py-1">Last Punch</th>
+            <th class="border px-6 py-1" @click="sortBy('punch_count')">Punches</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="user in hours" :key="user">
+            <tr class="bg-emerald-200">
+              <td x-text="user.name" class="border px-6 py-1"></td>
+              <td x-text="user.hours" class="border px-6 py-1"></td>
+              <td x-text="user.hours" class="border px-6 py-1"></td>
+              <td class="border px-6 py-1">9 am</td>
+              <td class="border px-6 py-1">5 pm</td>
+              <td x-text="user.punch_count" class="border px-6 py-1"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Working Hours</th>
-  </tr>
-  <template x-for="user in hours" :key="user">
-    <tr>
-    <td x-text="user.name"></td>
-    <td x-text="user.hours"></td>
-    </tr>
-  </template>
+    <!-- <div x-data="data()" x-init="getHours(false)"> -->
+    <!--   <h3 class="px-1 py-3">All Hours</h3> -->
 
-</table>
+    <!--   <table class="table-auto"> -->
+    <!--     <thead> -->
+    <!--       <tr> -->
+    <!--         <th class="py-1 divide-x">Name</th> -->
+    <!--         <th class="py-1 divide-x">Working Hours</th> -->
+    <!--       </tr> -->
+    <!--     </thead> -->
+    <!--     <tbody> -->
+    <!--       <template x-for="user in hours" :key="user"> -->
+    <!--         <tr> -->
+    <!--           <td x-text="user.name" class="py-1" ></td> -->
+    <!--           <td x-text="user.hours" class="py-1"></td> -->
+    <!--         </tr> -->
+    <!--       </template> -->
+    <!--     </tbody> -->
+    <!--   </table> -->
+    <!-- </div> -->
+  <!-- </div> -->
 
-</div>
-
-<script type="text/javascript">
-function data() {
-	return {
-		hours: [
-			{ id: 1, name: 'Zach Taylor', hours: 666  },
-			{ id: 2, name: 'Mike Son', hours: 69 }
-		],
-		isLoading: false,
-		getHours(core) {
-			url = 'http://192.168.1.2:8081/hours'
-			if (core) {
-				url = url + '?core=true'
-			}
-			this.isLoading = true;
-			fetch(url)
-				.then((res) => res.json())
-				.then((data) => {
-					this.isLoading = false;
-					console.log(data);
-					this.hours = data.users;
-				});
-		},
-	};
-}
-</script>
+  <script type="text/javascript">
+    function data() {
+      return {
+        hours: [
+          { id: 2, name: 'Mike Son', hours: 69 },
+          { id: 1, name: 'Zach Taylor', hours: 666  }
+        ],
+        sortDesc: true,
+        sortColumn: 'hours',
+        isLoading: false,
+        getHours(core) {
+          url = 'http://192.168.1.2:8081/hours'
+          if (core) {
+            url = url + '?core=true'
+          }
+          this.isLoading = true;
+          fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+              this.isLoading = false;
+              console.log(data);
+              this.hours = data.users;
+            });
+        },
+        sortBy(column) {
+          if (this.sortColumn == column) {
+            this.sortDesc = !this.sortDesc
+          }
+          this.sortColumn = column
+          this.hours = this.hours.sort((a, b) => {
+            if (column == 'name') {
+              if (this.sortDesc) {
+                return b[column] > a[column]
+              } else {
+                return a[column] > b[column]
+              }
+            } else {
+              if (this.sortDesc) {
+                return b[column] - a[column]
+              } else {
+                return a[column] - b[column]
+              }
+            }
+          })
+        }
+      };
+    }
+  </script>
 
 </body>
