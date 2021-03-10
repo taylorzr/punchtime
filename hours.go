@@ -33,21 +33,6 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 		order by hours desc
 	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
 
-	// NOTE: Query without coalesce the out
-	// err := config.DB.Select(&hours, `
-	// 	select
-	// 		u.name
-	// 		, coalesce(
-	// 		  sum(julianday("out") -
-	// 			julianday("in")) * 24
-	// 			, 0) as hours
-	// 	from punches p
-	// 	join users u on p.user_id = u.id
-	// 	where "in" between $1 and $2
-	// 	group by u.name
-	// 	order by hours desc
-	// `, begin.Format(time.RFC3339), end.Format(time.RFC3339))
-
 	return hours, err
 }
 
