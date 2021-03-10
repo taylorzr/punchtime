@@ -9,6 +9,10 @@ build: clean
 deploy: clean
 	ansible-playbook punchtime.yml -i hosts.yml
 
+# FIXME: All these direct ssh commands should prolly move to ansible
+restart:
+	ssh pi@192.168.1.2 -t 'sudo systemctl restart punchtime_web.service'
+
 # FIXME: Doesn't seem to auto-reload inside this makefile :(
 serve:
 	reflex -d none -s -R vendor. -r \.go$ -- go run . serve

@@ -20,12 +20,18 @@
   </div>
 
   <div class="flex space-x-4">
-    <div x-data="data()" x-init="getHours(true)">
+    <div x-data="data()" x-init="$watch('day', value => getHours(day, true)); getHours(0, true)">
       <h3 class="px-1 py-3">Hours</h3>
 
       <p>
         Sorted by: <span x-text="sortColumn"></span>
         Direction: <span x-text="sortDesc ? 'desc' : 'asc'"></span>
+      </p>
+
+      <p>
+        <button x-on:click="day--">-</button>
+        Day: <span x-text="day"></span>
+        <button x-on:click="day++">+</button>
       </p>
 
       <table class="table-auto">
@@ -79,17 +85,15 @@
   <script type="text/javascript">
     function data() {
       return {
-        hours: [
-          { id: 2, name: 'Mike Son', hours: 69 },
-          { id: 1, name: 'Zach Taylor', hours: 666  }
-        ],
+        day: 0,
+        hours: [],
         sortDesc: true,
         sortColumn: 'hours',
         isLoading: false,
-        getHours(core) {
-          url = 'http://192.168.1.2:8081/hours'
+        getHours(day, core) {
+          url = 'http://192.168.1.2:8081/hours?day=' + day
           if (core) {
-            url = url + '?core=true'
+            url = url + '&core=true'
           }
           this.isLoading = true;
           fetch(url)
@@ -98,12 +102,13 @@
               this.isLoading = false;
               console.log(data);
               this.hours = data.users;
+              this.sortBy(this.sortColumn);
             });
         },
         sortBy(column) {
-          if (this.sortColumn == column) {
-            this.sortDesc = !this.sortDesc
-          }
+          <!-- if (this.sortColumn == column) { -->
+          <!--   this.sortDesc = !this.sortDesc -->
+          <!-- } -->
           this.sortColumn = column
           this.hours = this.hours.sort((a, b) => {
             if (column == 'name') {
