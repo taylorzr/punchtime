@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -25,8 +26,23 @@ func HoursHandler(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
+	day := 0
+	if len(q["day"]) > 0 {
+		var err error
+		day, err = strconv.Atoi(q["day"][0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		if day > 0 {
+			log.Fatal("Day must be less than or equal to 0")
+		}
+	}
+
 	var begin, end time.Time
 	now := now()
+	fmt.Printf("Now=%s Day=%d\n", now.Format(time.RFC3339), day)
+	now = now.AddDate(0, 0, day)
+	fmt.Printf("Adjusted=%s\n", now.Format(time.RFC3339))
 
 	if len(q["core"]) > 0 && q["core"][0] == "true" {
 		begin = time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location()).UTC()
