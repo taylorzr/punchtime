@@ -19,16 +19,16 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 			, round(
 					coalesce(
 						sum(
-							julianday(min(coalesce("out", datetime('now')), $2))
-							- julianday(max("in", $1))
+							julianday(min(datetime(coalesce("out", 'now')), datetime($2)))
+							- julianday(max(datetime("in"), datetime($1)))
 						) * 24
 					, 0),
 				2) as hours
 			, count(p.id) as punch_count
 		from punches p
 		join users u on p.user_id = u.id
-		where "in" between $1 and $2
-		or "out" between $1 and $2
+		where datetime("in") between datetime($1) and datetime($2)
+		or datetime(coalesce("out", 'now')) between datetime($1) and datetime($2)
 		group by u.name
 		order by hours desc
 	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
