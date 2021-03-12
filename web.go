@@ -1,56 +1,35 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func HoursHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	q := r.URL.Query()
-
-	day := 0
-	if len(q["day"]) > 0 {
-		var err error
-		day, err = strconv.Atoi(q["day"][0])
-		if err != nil {
-			log.Fatal(err)
-		}
-		if day > 0 {
-			log.Fatal("Day must be less than or equal to 0")
-		}
+	data, err := ioutil.ReadFile("/usr/local/share/punchtime/hours.html")
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	now := now().AddDate(0, 0, day)
-	dayLog := GetDayLog(now)
-
-	w.Header().Add("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(dayLog)
+	fmt.Fprint(w, string(data))
 }
 
-func FirstLastsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+func PunchesHandler(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadFile("/usr/local/share/punchtime/punches.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Fprint(w, string(data))
+}
 
-	now := now()
-	begin := beginDay(now)
-	end := endDay(now)
+func JsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/javascript")
 
-	firstLasts, err := GetFirstLasts(begin, end)
-	// FIXME: Write http 500?
+	data, err := ioutil.ReadFile("/usr/local/share/punchtime/punchtime.js")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(
-		map[string]interface{}{
-			"begin":       begin.In(config.Timezone),
-			"end":         end.In(config.Timezone),
-			"first_lasts": firstLasts,
-		})
+	fmt.Fprint(w, string(data))
 }

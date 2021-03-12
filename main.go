@@ -46,8 +46,12 @@ func main() {
 			{
 				Name: "serve",
 				Action: func(c *cli.Context) error {
+					http.HandleFunc("/punchtime.js", JsHandler)
 					http.HandleFunc("/hours", HoursHandler)
-					http.HandleFunc("/firstlasts", FirstLastsHandler)
+					http.HandleFunc("/punches/", PunchesHandler)
+					http.HandleFunc("/api/hours", ApiHoursHandler)
+					http.HandleFunc("/api/firstlasts", ApiFirstLastsHandler)
+					http.HandleFunc("/api/punches/", ApiPunchesHandler)
 					fmt.Println("Server started at port 8081")
 					location := os.Getenv("LOCATION")
 					if location == "" {

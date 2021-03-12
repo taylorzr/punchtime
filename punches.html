@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  </head>
+</html>
+
+<body class="font-mono text-sm p-3">
+  <div x-data="punches()" x-init="getPunches()">
+    <table class="table-auto">
+      <thead>
+        <th class="border px-6 py-1">ID</th>
+        <th class="border px-6 py-1">In</th>
+        <th class="border px-6 py-1">Out</th>
+      </thead>
+      <tbody>
+        <template x-for="punch in punches" :key="punch">
+          <tr>
+            <td class="border px-6 py-1" x-text="punch.id"></td>
+            <td class="border px-6 py-1" x-text="new Date(Date.parse(punch.in))"></td>
+            <td class="border px-6 py-1" x-text="new Date(Date.parse(punch.out))"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <script type="text/javascript" src="/punchtime.js"></script>
+
+</body>

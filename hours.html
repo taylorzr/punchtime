@@ -9,7 +9,7 @@
 
 <body class="font-mono text-sm p-3">
   <div class="flex">
-    <div x-data="data()" x-init="$watch('day', value => getHours(day)); getHours(0)">
+    <div x-data="hours()" x-init="$watch('day', value => getHours(day)); getHours(0)">
       <div class="py-2 flex justify-end items-baseline">
         <p class="text-sm">
           <button class="px-2 text-white bg-gray-300 hover:bg-gray-400" @click="day--">‹</button>
@@ -28,13 +28,15 @@
         <thead>
           <template x-for="column in columns" :key="column">
             <th class="border px-6 py-1" x-text="column.pretty_name" @click="sortBy(column.code_name)">
+              <span x-show="sortColumn == column.code_name && sortDesc">▼</span>
+              <span x-show="sortColumn == column.code_name && !sortDesc">▲</span>
             </th>
           </template>
         </thead>
         <tbody>
           <template x-for="user in hours" :key="user">
-            <tr class="bg-emerald-200">
-              <td x-text="user.name" class="border px-6 py-1"></td>
+            <tr>
+              <td class="border px-6 py-1"><a x-bind:href="'/punches/' + user.name" x-text="user.name"></a></td>
               <td x-text="user.hours" class="border px-6 py-1"></td>
               <td x-text="user.core_hours" class="border px-6 py-1"></td>
               <td x-text="(user.hours - user.core_hours).toFixed(2)" class="border px-6 py-1"></td>
@@ -47,6 +49,6 @@
       </table>
     </div>
 
-  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="/punchtime.js"></script>
 
 </body>

@@ -21,11 +21,6 @@ type User struct {
 	Name    string `db:"name"`
 }
 
-// TODO:
-func (user User) Punches() ([]Punch, error) {
-	return nil, nil
-}
-
 func (user User) LastPunch() (*Punch, error) {
 	var punches []Punch
 
@@ -33,8 +28,8 @@ func (user User) LastPunch() (*Punch, error) {
 		select p.* from punches p
 		join users u on u.id = p.user_id
 		where u.id = $1
-		order by id
-		desc limit 1
+		order by id desc
+		limit 1
 	`, user.ID)
 
 	if len(punches) == 0 {
