@@ -1,16 +1,21 @@
-# TODO
-- [ ] if someone is active now, count up until now as worked time
-- [ ] basic web ui to show time worked by day / week
+# Punchtime
+
+Very alpha project. Monitor slack presence to record "working" hours.
+
+
+## TODO
 - [ ] error service!
 - [ ] move port to env and put it in overrides
 ---
+- [x] if someone is active now, count up until now as worked time
+- [x] basic web ui to show time worked by day / week
 - [x] systemd config including schedule > https://trstringer.com/systemd-timer-vs-cronjob/
 - [x] go code to hit api and update db
 - [x] ansible
 - [x] makefile
 
 
-# Frontend ideas
+## Frontend ideas
 - [ ] dropdown for day selection
 - [ ] dropdown for user selection
 - [ ] some checkbox or filter for only working hours like 9-5 or 8-6
@@ -30,7 +35,8 @@
 /hours?user='Zach Taylor'
 
 
-# Learned
+## Learned
+- [x] alpinejs
 - [x] deploying via ansible
 - [x] creating systemd services & timers
 - [x] basic sqlite usage, and lovely details about timezones
