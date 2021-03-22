@@ -20,7 +20,7 @@
           <tr>
             <td class="border px-6 py-1" x-text="punch.id"></td>
             <td class="border px-6 py-1" x-text="new Date(Date.parse(punch.in))"></td>
-            <td class="border px-6 py-1" x-text="new Date(Date.parse(punch.out))"></td>
+            <td class="border px-6 py-1" x-text="punch.out == '-' ? '' : new Date(Date.parse(punch.out))"></td>
           </tr>
         </template>
       </tbody>

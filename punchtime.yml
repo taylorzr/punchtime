@@ -8,28 +8,6 @@
         env GOOS=linux GOARCH=arm GOARM=5 go build
       delegate_to: localhost
       become: no
-    - name: Install punchtime.js
-      ansible.builtin.copy:
-        src: punchtime.js
-        dest: /usr/local/share/punchtime/punchtime.js
-        owner: pi
-        group: pi
-        mode: u=rwx,g=rx,o=rx
-    - name: Install hours.html
-      ansible.builtin.copy:
-        src: hours.html
-        dest: /usr/local/share/punchtime/hours.html
-        owner: pi
-        group: pi
-        mode: u=rwx,g=rx,o=rx
-    - name: Install punches.html
-      ansible.builtin.copy:
-        src: punches.html
-        dest: /usr/local/share/punchtime/punches.html
-        owner: pi
-        group: pi
-        mode: u=rwx,g=rx,o=rx
-      register: application
     - name: Install application
       ansible.builtin.copy:
         src: punchtime

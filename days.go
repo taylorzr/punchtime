@@ -21,11 +21,12 @@ type UserDayLog struct {
 }
 
 func GetDayLog(now time.Time) DayLog {
-	begin := beginDay(now)
-	end := endDay(now)
+	windowBegin := beginDay(now)
+	windowEnd := endDay(now)
+	begin, end := windowBegin, windowEnd
 
-	fmt.Printf("Getting hours between %s and %s\n", begin.Format(time.RFC3339), end.Format(time.RFC3339))
-	allHours, err := GetHours(begin, end)
+	fmt.Printf("Getting hours between %s and %s\n", windowBegin.Format(time.RFC3339), windowEnd.Format(time.RFC3339))
+	allHours, err := GetHours(begin, end, windowBegin, windowEnd)
 	// FIXME: Write http 500?
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +35,7 @@ func GetDayLog(now time.Time) DayLog {
 	coreBegin := time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0, 0, now.Location()).UTC()
 	coreEnd := time.Date(now.Year(), now.Month(), now.Day(), 17, 0, 0, 0, now.Location()).UTC()
 	fmt.Printf("Getting hours between %s and %s\n", coreBegin.Format(time.RFC3339), coreEnd.Format(time.RFC3339))
-	coreHours, err := GetHours(coreBegin, coreEnd)
+	coreHours, err := GetHours(coreBegin, coreEnd, windowBegin, windowEnd)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,8 +62,8 @@ func GetDayLog(now time.Time) DayLog {
 	}
 
 	return DayLog{
-		Begin: begin.In(config.Timezone),
-		End:   end.In(config.Timezone),
+		Begin: windowBegin.In(config.Timezone),
+		End:   windowEnd.In(config.Timezone),
 		Hours: hours,
 	}
 }

@@ -10,9 +10,14 @@ type Hours struct {
 	PunchCount int     `db:"punch_count" json:"punch_count"`
 }
 
-func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
+func GetHours(begin time.Time, end time.Time, windowBegin time.Time, windowEnd time.Time) ([]Hours, error) {
 	var hours []Hours
 
+	// FIXME: So this now handles punches where someone is punched in before 9 and after 5,
+	// but it doesn't handle punched in for days at time
+	// Don't really care, but to fix we should force punch out / in at midnight / whatever we consider
+	// beginning of day (5am?)
+	// E.g. See March 16th
 	err := config.DB.Select(&hours, `
 		select
 			u.name
@@ -22,16 +27,35 @@ func GetHours(begin time.Time, end time.Time) ([]Hours, error) {
 							julianday(min(datetime(coalesce("out", 'now')), datetime($2)))
 							- julianday(max(datetime("in"), datetime($1)))
 						) * 24
-					, 0),
-				2) as hours
+					, 0)
+				, 2) as hours
 			, count(p.id) as punch_count
 		from punches p
 		join users u on p.user_id = u.id
 		where datetime("in") between datetime($1) and datetime($2)
 		or datetime(coalesce("out", 'now')) between datetime($1) and datetime($2)
 		group by u.name
-		order by hours desc
-	`, begin.Format(time.RFC3339), end.Format(time.RFC3339))
+
+		union
+
+		select
+			u.name
+			, round(
+					(
+						julianday(min(coalesce("out", datetime('now')), datetime($2))) -
+						julianday(max("in", $1))
+					) * 24
+				, 2) as hours
+			, count(p.id) as punch_count
+		from punches p
+		join users u on p.user_id = u.id
+		where u.name = 'Zach Taylor'
+		and datetime("in") between datetime($3) and datetime($4)
+		and datetime("in") < datetime($1)
+		and datetime("out") > datetime($2)
+		group by u.name
+
+	`, begin.Format(time.RFC3339), end.Format(time.RFC3339), windowBegin.Format(time.RFC3339), windowEnd.Format(time.RFC3339))
 
 	return hours, err
 }
