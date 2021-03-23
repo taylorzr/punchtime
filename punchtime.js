@@ -71,3 +71,13 @@ window.punches = function () {
     }
   };
 }
+
+function toTimeString(date) {
+	if (date == '-') {
+		return '';
+	} else {
+		d = new Date(Date.parse(date))
+		// FIXME: What's the proper way to stftime javascript
+		return `${d.getHours()}:${d.getMinutes()}`;
+	}
+}

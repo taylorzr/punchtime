@@ -6,6 +6,9 @@ Very alpha project. Monitor slack presence to record "working" hours.
 ## TODO
 - [ ] error service!
 - [ ] move port to env and put it in overrides
+- [ ] stats on user page, or page of stats?
+      like avg first / last punch
+      avg hours?
 ---
 - [x] if someone is active now, count up until now as worked time
 - [x] basic web ui to show time worked by day / week

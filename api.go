@@ -45,6 +45,7 @@ func ApiHoursHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(dayLog)
 }
 
+// TODO: Delete me
 func ApiFirstLastsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
