@@ -12,14 +12,16 @@ Very alpha project. Monitor slack presence to record "working" hours.
 
 ## Configuration
 
-Intended to be run on a raspberry pi. Create a file .envrc.local with the env SERVER pointing at the
-pi's ipaddress. E.g.
+Intended to be run on a raspberry pi. Create a file .envrc.local with the envs
+- SERVER: pi's address
+- SLACK_TOKEN: your slack token
+- GETPING_TOKEN: your unique key from https://my.getping.info/
 
 ```
 export SERVER='192.168.1.2'
+export SLACK_TOKEN='<your-slack-token>'
+export GETPING_TOKEN='<your-getping-token>'
 ```
-
-You also need the env var SLACK_TOKEN to be present in your shell.
 
 ## Raspberry Pi Installation
 

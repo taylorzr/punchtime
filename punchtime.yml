@@ -71,6 +71,7 @@
         content: |
           [Service]
           Environment="SLACK_TOKEN={{ lookup('env', 'SLACK_TOKEN') }}"
+          ExecStartPost=/usr/bin/curl https://api.getping.info/iURvOoSc/punchtime_started
         dest: /etc/systemd/system/punchtime_web.service.d/override.conf
         owner: root
         group: root
