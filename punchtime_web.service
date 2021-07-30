@@ -1,7 +1,9 @@
-
 [Unit]
 Description=Punchtime
 
 [Service]
 ExecStart=/usr/local/bin/punchtime serve
 Restart=always
+
+[Install]
+WantedBy=multi-user.target

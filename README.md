@@ -8,8 +8,6 @@ Very alpha project. Monitor slack presence to record "working" hours.
       $ curl -sH "Authorization: Bearer $SLACK_TOKEN" 'https://slack.com/api/usergroups.list' | jq '.usergroups[] | select(.handle == "devops")'
       $ curl -sH "Authorization: Bearer $SLACK_TOKEN" 'https://slack.com/api/usergroups.users.list?usergroup=S013DRRKA4Q' | jq .
  .
-- [ ] service doesn't start after reboot? maybe need put service in /etc/systemd/systemd instead of
-  under the pi user
 
 
 ## Configuration
@@ -48,7 +46,7 @@ Test: `go test`
 - [x] go code to hit api and update db
 - [x] ansible
 - [x] makefile
-
+- [x] service doesn't start after reboot?
 
 ## Frontend ideas
 - [ ] dropdown for day selection
