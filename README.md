@@ -2,6 +2,38 @@
 
 Very alpha project. Monitor slack presence to record "working" hours.
 
+## FIXME
+- [ ] Configure users to track
+      Track by team?
+      $ curl -sH "Authorization: Bearer $SLACK_TOKEN" 'https://slack.com/api/usergroups.list' | jq '.usergroups[] | select(.handle == "devops")'
+      $ curl -sH "Authorization: Bearer $SLACK_TOKEN" 'https://slack.com/api/usergroups.users.list?usergroup=S013DRRKA4Q' | jq .
+ .
+- [ ] service doesn't start after reboot? maybe need put service in /etc/systemd/systemd instead of
+  under the pi user
+
+
+## Configuration
+
+Intended to be run on a raspberry pi. Create a file .envrc.local with the env SERVER pointing at the
+pi's ipaddress. E.g.
+
+```
+export SERVER='192.168.1.2'
+```
+
+## Raspberry Pi Installation
+
+```
+ansible-playbook punchtime.yml -i $SERVER,
+```
+
+Test by checking `make logs` and or `open http:$SERVER:8081/hours`
+
+## Local Dev
+
+Run Webserver: `make serve`
+TODO: Run iteration on a loop
+Test: `go test`
 
 ## TODO
 - [ ] error service!

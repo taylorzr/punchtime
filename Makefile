@@ -1,4 +1,8 @@
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := help
+.PHONY := help deploy serve sql ssh logs
+
+help:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
@@ -9,19 +13,17 @@ build: clean
 deploy: clean
 	ansible-playbook punchtime.yml -i hosts.yml
 
-# FIXME: All these direct ssh commands should prolly move to ansible
 restart:
-	ssh pi@192.168.1.2 -t 'sudo systemctl restart punchtime_web.service'
+	ssh pi@${SERVER} -t 'sudo systemctl restart punchtime_web.service'
 
-# FIXME: Doesn't seem to auto-reload inside this makefile :(
 serve:
-	reflex -d none -s -R vendor. -r \.go$ -- go run . serve
+	exec reflex -s -d none -r '\.go$$' -- go run . serve
 
 sql:
-	ssh pi@192.168.1.2 -t 'sudo sqlite3 -header -column /usr/local/share/punchtime/punchtime.db'
+	ssh pi@${SERVER} -t 'sudo sqlite3 -header -column /usr/local/share/punchtime/punchtime.db'
 
 ssh:
-	ssh pi@192.168.1.2
+	ssh pi@${SERVER}
 
 logs:
-	ssh pi@192.168.1.2 -t 'journalctl -u punchtime_recorder -u punchtime_web -n 100 -f'
+	ssh pi@${SERVER} -t 'journalctl -u punchtime_recorder -u punchtime_web -n 100 -f'

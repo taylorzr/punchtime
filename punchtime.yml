@@ -87,6 +87,10 @@
         state: restarted
         enabled: yes
       when: application.changed
+    - name: Make /usr/local/share/punchtime directory
+      file:
+        path: /usr/local/share/punchtime
+        state: directory
     - name: Copy database structure
       ansible.builtin.copy:
         src: migrations/000001_initial_schema.up.sql
@@ -94,6 +98,9 @@
         owner: root
         group: root
         mode: u=rw,g=r,o=r
+    - name: Install sqlite
+      apt:
+        name: sqlite3
     - name: Setup sqlite database
       ansible.builtin.shell:
         cmd: sqlite3 /usr/local/share/punchtime/punchtime.db < /usr/local/share/punchtime/structure.sql

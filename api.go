@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ApiPunchesHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Punchtime) ApiPunchesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	username := strings.TrimPrefix(r.URL.Path, "/api/punches/")

@@ -51,7 +51,7 @@ func main() {
 					http.HandleFunc("/punches/", PunchesHandler)
 					http.HandleFunc("/api/hours", ApiHoursHandler)
 					http.HandleFunc("/api/firstlasts", ApiFirstLastsHandler)
-					http.HandleFunc("/api/punches/", ApiPunchesHandler)
+					http.HandleFunc("/api/punches/", config.ApiPunchesHandler)
 					fmt.Println("Server started at port 8081")
 					location := os.Getenv("LOCATION")
 					if location == "" {

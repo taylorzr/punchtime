@@ -25,7 +25,12 @@ window.hours = function () {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          this.hours = data.hours;
+            hours = data.hours;
+            hours.forEach(function(h, index) {
+                hours[index].first_punch = h.first_punch == '-' ? null : new Date(Date.parse(h.first_punch));
+                hours[index].last_punch = h.last_punch == '-' ? null : new Date(Date.parse(h.last_punch));
+            });
+            this.hours = hours;
           this.sort();
         });
     },
@@ -70,14 +75,4 @@ window.punches = function () {
         });
     }
   };
-}
-
-function toTimeString(date) {
-	if (date == '-') {
-		return '';
-	} else {
-		d = new Date(Date.parse(date))
-		// FIXME: What's the proper way to stftime javascript
-		return `${d.getHours()}:${d.getMinutes()}`;
-	}
 }
