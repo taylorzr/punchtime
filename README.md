@@ -19,6 +19,8 @@ pi's ipaddress. E.g.
 export SERVER='192.168.1.2'
 ```
 
+You also need the env var SLACK_TOKEN to be present in your shell.
+
 ## Raspberry Pi Installation
 
 ```
